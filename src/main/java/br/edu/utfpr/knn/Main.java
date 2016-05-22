@@ -16,6 +16,7 @@ public class Main {
         knn.classifica(treino, teste, 5);
         knn.classifica(treino, teste, 7);
         knn.classifica(treino, teste, 9);
+        knn.classifica(treino, teste, 11);
     }
 
 }
