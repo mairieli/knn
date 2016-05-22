@@ -3,5 +3,5 @@ Alunos: Bruno Mendes e Mairieli Wessel
 
 Passos para execução do algoritmo:
 - Importe o projeto no netbeans ou eclipse
-- Na classe Main ...
+- Na classe Main já estão setados os arquivos de treino e teste, caso deseje informar outros será necessário mudar o caminho dos arquivos.
 - Execute o projeto 
