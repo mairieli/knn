@@ -16,7 +16,7 @@ public class Knn {
      */
     public void classifica(List<Instancia> treino, List<Instancia> teste, Integer k) {
         this.normalizaMinMax(treino, teste);
-        System.out.println("_____________________KNN: " + k + "_____________________");
+        System.out.println("______________________________KNN: " + k + "______");
 
         List<Instancia> treino2 = this.selecionaPorcentagem(treino, 50);
         List<Instancia> treino3 = this.selecionaPorcentagem(treino, 25);
@@ -121,9 +121,9 @@ public class Knn {
             }
             System.out.println();
         }
-        double taxa = diagonal / soma;
+        Double taxa = (diagonal / soma);
         System.out.println("_______");
-        System.out.println("Taxa: " + taxa);
+        System.out.printf("Taxa: %.4f\n", taxa);
     }
 
     private double distanciaEuclidiana(Instancia treino, Instancia teste) {
