@@ -15,19 +15,19 @@ public class Knn {
      * @param k Valor de k vizinhos.
      */
     public void classifica(List<Instancia> treino, List<Instancia> teste, Integer k) {
-        this.normalizaMinMax(treino, teste);
-        System.out.println("______________________________K: " + k + "______");
+        this.normalizaZScore(treino, teste);
+        System.out.println("____________________VALOR K: " + k + "______");
 
         List<Instancia> treino2 = this.selecionaPorcentagem(treino, 50);
         List<Instancia> treino3 = this.selecionaPorcentagem(treino, 25);
 
-        System.out.println("100% - Matriz de Confusão: ");
+        System.out.println("100% Instancias de Treino - Matriz de Confusão: ");
         this.matrizConfusao(treino, teste, k);
         System.out.println("____________________________");
-        System.out.println("50% - Matriz de Confusão: ");
+        System.out.println("50% Instancias de Treino- Matriz de Confusão: ");
         this.matrizConfusao(treino2, teste, k);
         System.out.println("____________________________");
-        System.out.println("25% - Matriz de Confusão: ");
+        System.out.println("25% Instancias de Treino- Matriz de Confusão: ");
         this.matrizConfusao(treino3, teste, k);
         System.out.println("_________________________________________________________________________________________________________________________");
     }
@@ -148,58 +148,69 @@ public class Knn {
         return classes;
     }
 
-    /**
-     * Normaliza os dados de um conjunto de Treino e Teste com o Min-Max.
-     *
-     * @param treino
-     * @param teste
-     */
-    private void normalizaMinMax(List<Instancia> treino, List<Instancia> teste) {
-        Double novoMin = 0.0;
-        Double novoMax = 1.0;
+    private void normalizaZScore(List<Instancia> treino, List<Instancia> teste) {
+        int quantidadeCaracteristicas = treino.get(0).getCaracteristicas().size();
+        Double[] medias = new Double[quantidadeCaracteristicas];
+        Double[] desviosPadrao = new Double[quantidadeCaracteristicas];
+        int nInstancias = 0;
 
-        //Encontra o menor e maior valor para cada caracterisitca no conjunto de treino;
-        Double[] maiorValorCaracterisicas = new Double[treino.get(0).getCaracteristicas().size()];
-        Double[] menorValorCaracterisicas = new Double[treino.get(0).getCaracteristicas().size()];
-        for (int i = 0; i < maiorValorCaracterisicas.length; i++) {
-            maiorValorCaracterisicas[i] = treino.get(0).getCaracteristicas().get(i);
-            menorValorCaracterisicas[i] = treino.get(0).getCaracteristicas().get(i);
+        for (int i = 0; i < medias.length; i++) {
+            medias[i] = 0.0;
         }
+
+        //Soma cada caracteristica de todas as instancias do conjunto de treino.
         for (Instancia t : treino) {
-            for (int i = 0; i < maiorValorCaracterisicas.length; i++) {
-                if (t.getCaracteristicas().get(i) > maiorValorCaracterisicas[i]) {
-                    maiorValorCaracterisicas[i] = t.getCaracteristicas().get(i);
-                }
-                if (t.getCaracteristicas().get(i) < menorValorCaracterisicas[i]) {
-                    menorValorCaracterisicas[i] = t.getCaracteristicas().get(i);
-                }
+            for (int i = 0; i < medias.length; i++) {
+                medias[i] += t.getCaracteristicas().get(i);
             }
+            nInstancias++;
         }
 
-        // Normalização Min-Max: 
-        // novo_valor = ( ( valor - menor_valor ) / ( maior_valor - menor_valor ) ) * (novo_maior - novo_menor) + novo_menor;
-        //Normalizar os dados do conjundo de treino:
-        for (Instancia t : treino) {
-            List<Double> caracterisicaNormalizada = new LinkedList<>();
-            for (int i = 0; i < t.getCaracteristicas().size(); i++) {
-                Double novoDado = (t.getCaracteristicas().get(i) - menorValorCaracterisicas[i]) / (maiorValorCaracterisicas[i] - menorValorCaracterisicas[i]);
-                novoDado = novoDado * (novoMax - novoMin) + novoMin;
-                caracterisicaNormalizada.add(novoDado);
-            }
-            t.getCaracteristicas().clear();
-            t.getCaracteristicas().addAll(caracterisicaNormalizada);
-        }
-
-        //Normalizar os dados do conjundo de teste:
+        //Soma cada caracteristica de todas as instancias do conjunto de teste.
         for (Instancia t : teste) {
+            for (int i = 0; i < medias.length; i++) {
+                medias[i] += t.getCaracteristicas().get(i);
+            }
+            nInstancias++;
+        }
+
+        //Faz a média de cada caracteristica:
+        for (int i = 0; i < medias.length; i++) {
+            medias[i] = (medias[i] / nInstancias);
+        }
+
+        //Calcula o desvio padrão de cada caracteristica.
+        for (int i = 0; i < desviosPadrao.length; i++) {
+            Double desvioPadrao = 0.0;
+            for (Instancia t : treino) {
+                desvioPadrao += Math.pow(t.getCaracteristicas().get(i) - medias[i], 2);
+            }
+            for (Instancia t : teste) {
+                desvioPadrao += Math.pow(t.getCaracteristicas().get(i) - medias[i], 2);
+            }
+            desviosPadrao[i] = Math.sqrt(desvioPadrao / (nInstancias - 1));
+        }
+
+        //Normaliza os padrões do Conjunto de Treino.
+        treino.stream().forEach((t) -> {
             List<Double> caracterisicaNormalizada = new LinkedList<>();
             for (int i = 0; i < t.getCaracteristicas().size(); i++) {
-                Double novoDado = (t.getCaracteristicas().get(i) - menorValorCaracterisicas[i]) / (maiorValorCaracterisicas[i] - menorValorCaracterisicas[i]);
-                novoDado = novoDado * (novoMax - novoMin) + novoMin;
-                caracterisicaNormalizada.add(novoDado);
+                Double dadoNormalizado = (t.getCaracteristicas().get(i) - medias[i]) / desviosPadrao[i];
+                caracterisicaNormalizada.add(dadoNormalizado);
             }
             t.getCaracteristicas().clear();
             t.getCaracteristicas().addAll(caracterisicaNormalizada);
-        }
+        });
+
+        //Normaliza os padrões do Conjunto de Teste.
+        teste.stream().forEach((t) -> {
+            List<Double> caracterisicaNormalizada = new LinkedList<>();
+            for (int i = 0; i < t.getCaracteristicas().size(); i++) {
+                Double dadoNormalizado = (t.getCaracteristicas().get(i) - medias[i]) / desviosPadrao[i];
+                caracterisicaNormalizada.add(dadoNormalizado);
+            }
+            t.getCaracteristicas().clear();
+            t.getCaracteristicas().addAll(caracterisicaNormalizada);
+        });
     }
 }
