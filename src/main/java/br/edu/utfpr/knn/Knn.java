@@ -15,8 +15,8 @@ public class Knn {
      * @param k Valor de k vizinhos.
      */
     public void classifica(List<Instancia> treino, List<Instancia> teste, Integer k) {
-        System.out.println("********KNN: " + k + "********");
         this.normalizaMinMax(treino, teste);
+        System.out.println("_____________________KNN: " + k + "_____________________");
 
         List<Instancia> treino2 = this.selecionaPorcentagem(treino, 50);
         List<Instancia> treino3 = this.selecionaPorcentagem(treino, 25);
