@@ -16,7 +16,7 @@ public class Knn {
      */
     public void classifica(List<Instancia> treino, List<Instancia> teste, Integer k) {
         this.normalizaMinMax(treino, teste);
-        System.out.println("______________________________KNN: " + k + "______");
+        System.out.println("______________________________K: " + k + "______");
 
         List<Instancia> treino2 = this.selecionaPorcentagem(treino, 50);
         List<Instancia> treino3 = this.selecionaPorcentagem(treino, 25);
