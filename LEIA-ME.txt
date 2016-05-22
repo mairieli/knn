@@ -1,0 +1,7 @@
+Algoritmo k-NN
+Alunos: Bruno Mendes e Mairieli Wessel
+
+Passos para execução do algoritmo:
+- Importe o projeto no netbeans ou eclipse
+- Na classe Main ...
+- Execute o projeto 
