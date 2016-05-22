@@ -9,13 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author mairieli
- */
 public class ManipuladorArquivo {
 
     public static List<Instancia> lerArquivo(String caminho) {
@@ -39,9 +33,9 @@ public class ManipuladorArquivo {
             }
             br.close();
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(ManipuladorArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         } catch (IOException ex) {
-            Logger.getLogger(ManipuladorArquivo.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println(ex.getMessage());
         }
         return instancias;
     }
